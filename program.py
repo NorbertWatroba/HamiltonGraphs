@@ -32,9 +32,10 @@ while True:
         case 'print' | 'p':
             print(graph)
         case 'hamilton' | 'h':
-            pass
+            print(*graph.hamilton_cycle())
         case 'euler' | 'e':
             pass
+            # print(*graph.euler_cycle())
         case 'help' | '?':
             print('''
 +=========================================================================+
