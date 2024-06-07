@@ -1,3 +1,6 @@
+from copy import deepcopy
+
+
 class Graph:
     def __init__(self, data: list[list[bool]]):
         self.matrix = data
@@ -52,4 +55,67 @@ class Graph:
         return [x+1 for x in cycle]
 
     def euler_cycle(self) -> list[int]:
-        pass
+        def has_euler_cycle() -> bool:
+            if not is_connected():
+                return False
+            for i in range(self.size):
+                if vertex_degree(i) % 2 != 0:
+                    return False
+            return True
+
+        def is_connected() -> bool:
+            def dfs(vertex: int):
+                dfs_stack = [vertex]
+                while dfs_stack:
+                    node = dfs_stack.pop()
+                    if not visited[node]:
+                        visited[node] = True
+                        for i in range(self.size):
+                            if self.matrix[node][i] and not visited[i] and i not in dfs_stack:
+                                dfs_stack.append(i)
+
+            visited = [False] * self.size
+            start_vertex = next((i for i in range(self.size) if vertex_degree(i) > 0), -1)
+            if start_vertex == -1:
+                return True
+
+            dfs(start_vertex)
+            return all(visited[i] or vertex_degree(i) == 0 for i in range(self.size))
+
+        def vertex_degree(vertex: int) -> int:
+            return sum(graph[vertex])
+
+        def get_next_edge(vertex: int) -> int:
+            for i in range(self.size):
+                if graph[vertex][i]:
+                    return i
+            return -1
+
+        def remove_edge(f: int, t: int) -> None:
+            graph[f][t] = False
+            graph[t][f] = False
+
+        graph = deepcopy(self.matrix)
+
+        if not has_euler_cycle():
+            return []
+
+        cycle = []
+        stack = []
+        current_vertex = 0
+        stack.append(current_vertex)
+
+        while stack:
+            if vertex_degree(current_vertex) > 0:
+                if current_vertex not in stack:
+                    stack.append(current_vertex)
+                next_vertex = get_next_edge(current_vertex)
+                remove_edge(current_vertex, next_vertex)
+                current_vertex = next_vertex
+
+            else:
+                cycle.append(current_vertex)
+                current_vertex = stack.pop()
+        return [i+1 for i in cycle]
+
+
