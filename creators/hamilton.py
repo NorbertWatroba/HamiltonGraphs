@@ -17,6 +17,7 @@ def hamilton_data(size: int, saturation: int) -> list[list[bool]]:
         data[current_node][previous_node] = True
         previous_node = current_node
     data[hamilton_cycle[-1]][hamilton_cycle[0]] = True
+    data[hamilton_cycle[0]][hamilton_cycle[-1]] = True
 
     # additional edges
     while additional_cycles:
